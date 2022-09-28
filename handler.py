@@ -1,11 +1,12 @@
-import logging
-import datetime
+import logging, io
 from pathlib import Path
-from typing import Dict, List
-from ghapi.all import GhApi
-import fastcore
-from jinja2 import Environment, FileSystemLoader
 from dateutil import parser
+from typing import Dict, List
+from tempfile import TemporaryFile
+from ghapi.all import GhApi
+from fastcore.net import HTTP404NotFoundError
+from jinja2 import Environment, FileSystemLoader
+import boto3
 
 
 GH_ORG = "level-up-program"
@@ -51,7 +52,7 @@ def get_all_repo_data() -> List:
             continue
         try:
             headref = get_branch(repo_name, repo["default_branch"])
-        except fastcore.net.HTTP404NotFoundError:
+        except HTTP404NotFoundError:
             continue
         else:
             commit_sha = headref["object"]["sha"]
@@ -76,9 +77,10 @@ def main():
     data = get_all_repo_data()
     content = template.render(data=data)
     output_file_path = "index.html"
-    with open(output_file_path, mode="w", encoding="utf-8") as message:
-        message.write(content)
-        print(f"... wrote {output_file_path}")
+    s3 = boto3.resource("s3")
+    s3.Bucket("lvlup-build-monitor").put_object(
+        Body=content.encode("utf-8"), ContentType="text/html", Key=output_file_path
+    )
 
 
 def run(event, context):

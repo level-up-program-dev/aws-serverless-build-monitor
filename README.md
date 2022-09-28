@@ -17,7 +17,7 @@ This template demonstrates how to develop and deploy a simple cron-like service 
 
 ## Schedule event type
 
-This examples defines two functions, `rateHandler` and `cronHandler`, both of which are triggered by an event of `schedule` type, which is used for configuring functions to be executed at specific time or in specific intervals. For detailed information about `schedule` event, please refer to corresponding section of Serverless [docs](https://serverless.com/framework/docs/providers/aws/events/schedule/).
+This examples defines two functions, `renderRepoDetails` and `cronHandler`, both of which are triggered by an event of `schedule` type, which is used for configuring functions to be executed at specific time or in specific intervals. For detailed information about `schedule` event, please refer to corresponding section of Serverless [docs](https://serverless.com/framework/docs/providers/aws/events/schedule/).
 
 When defining `schedule` events, we need to use `rate` or `cron` expression syntax.
 
@@ -31,48 +31,17 @@ rate(value unit)
 
 `unit` - The unit of time. ( minute | minutes | hour | hours | day | days )
 
-In below example, we use `rate` syntax to define `schedule` event that will trigger our `rateHandler` function every minute
+In below example, we use `rate` syntax to define `schedule` event that will trigger our `renderRepoDetails` function every minute
 
 ```yml
 functions:
-  rateHandler:
+  renderRepoDetails:
     handler: handler.run
     events:
       - schedule: rate(1 minute)
 ```
 
 Detailed information about rate expressions is available in official [AWS docs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#RateExpressions).
-
-
-### Cron expressions syntax
-
-```pseudo
-cron(Minutes Hours Day-of-month Month Day-of-week Year)
-```
-
-All fields are required and time zone is UTC only.
-
-| Field         | Values         | Wildcards     |
-| ------------- |:--------------:|:-------------:|
-| Minutes       | 0-59           | , - * /       |
-| Hours         | 0-23           | , - * /       |
-| Day-of-month  | 1-31           | , - * ? / L W |
-| Month         | 1-12 or JAN-DEC| , - * /       |
-| Day-of-week   | 1-7 or SUN-SAT | , - * ? / L # |
-| Year          | 192199      | , - * /       |
-
-In below example, we use `cron` syntax to define `schedule` event that will trigger our `cronHandler` function every second minute every Monday through Friday
-
-```yml
-functions:
-  cronHandler:
-    handler: handler.run
-    events:
-      - schedule: cron(0/2 * ? * MON-FRI *)
-```
-
-Detailed information about cron expressions in available in official [AWS docs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#CronExpressions).
-
 
 ## Usage
 
@@ -95,13 +64,12 @@ serverless deploy
 After running deploy, you should see output similar to:
 
 ```bash
-Deploying aws-python-scheduled-cron-project to stage dev (us-east-1)
+Deploying aws-serverless-build-monitor to stage dev (us-east-1)
 
-✔ Service deployed to stack aws-python-scheduled-cron-project-dev (205s)
+✔ Service deployed to stack aws-serverless-build-monitor-dev (205s)
 
 functions:
-  rateHandler: aws-python-scheduled-cron-project-dev-rateHandler (2.9 kB)
-  cronHandler: aws-python-scheduled-cron-project-dev-cronHandler (2.9 kB)
+  renderRepoDetails: aws-serverless-build-monitor-dev-renderRepoDetails (12 MB)
 ```
 
 There is no additional step required. Your defined schedules becomes active right away after deployment.
@@ -111,13 +79,13 @@ There is no additional step required. Your defined schedules becomes active righ
 In order to test out your functions locally, you can invoke them with the following command:
 
 ```
-serverless invoke local --function rateHandler
+serverless invoke local --function renderRepoDetails
 ```
 
 After invocation, you should see output similar to:
 
 ```bash
-INFO:handler:Your cron function aws-python-scheduled-cron-dev-rateHandler ran at 15:02:43.203145
+INFO:handler:Your cron function aws-serverless-build-monitor-dev-renderRepoDetails ran at 15:02:43.203145
 ```
 
 ### Bundling dependencies
