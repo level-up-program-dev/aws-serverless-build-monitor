@@ -2,31 +2,36 @@ service: aws-serverless-build-monitor
 
 frameworkVersion: '3'
 
-
 provider:
   name: aws
-  runtime: python3.8
+  deploymentMethod: direct
+  runtime: python3.9
 
 functions:
-  rateHandler:
+  renderRepoDetails:
     handler: handler.run
     events:
       # Invoke Lambda function every minute
       - schedule: rate(1 minute)
-  cronHandler:
-    handler: handler.run
-    events:
-      # Invoke Lambda function every 2nd minute from Mon-Fri
-      - schedule: cron(0/2 * ? * MON-FRI *)
 
 plugins:
   - serverless-python-requirements
 
-custom:
-  pythonRequirements:
-    usePipenv: true
-
 package:
   patterns:
     - '!node_modules/**'
-    - 'templates/index.html'
+    - '!package.*'
+    - '!Pipfile*'
+    - 'templates/**'
+
+custom:
+  pythonRequirements:
+    usePipenv: true
+    invalidateCaches: true
+    strip: false
+    slim: true
+    slimPatternsAppendDefaults: false
+    slimPatterns:
+        - "**/*.pyc"
+        - "**/*.pyo"
+        - "**/__pycache__*"
