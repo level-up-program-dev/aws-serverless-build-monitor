@@ -5,6 +5,19 @@ provider:
   name: aws
   deploymentMethod: direct
   runtime: python3.9
+  region: ${opt:region, 'us-east-1'}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: 's3:ListBucket'
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - 's3:GetObject'
+            - 's3:PutObject'
+          Resource:
+            - arn:aws:s3:::${self:custom.bucketName}/*
 
 resources:
   Resources:
@@ -57,8 +70,10 @@ resources:
 functions:
   renderRepoDetails:
     handler: handler.run
+    environment: 
+      # https://www.serverless.com/blog/aws-secrets-management/
+      GITHUB_TOKEN: ${ssm:/GITHUB_TOKEN}
     events:
-      # Invoke Lambda function every minute
       - schedule: rate(1 minute)
 
 plugins:
