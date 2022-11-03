@@ -1,8 +1,7 @@
-import logging, io
+import logging
 from pathlib import Path
 from dateutil import parser
 from typing import Dict, List
-from tempfile import TemporaryFile
 from ghapi.all import GhApi
 from fastcore.net import HTTP404NotFoundError
 from jinja2 import Environment, FileSystemLoader
@@ -14,6 +13,7 @@ TEMPLATE_ROOT_DIR = Path("./templates")
 environment = Environment(
     loader=FileSystemLoader(TEMPLATE_ROOT_DIR),
     extensions=["jinja2_humanize_extension.HumanizeExtension"],
+    autoescape=True,
 )
 template = environment.get_template("index.html")
 
