@@ -78,7 +78,7 @@ def main():
     content = template.render(data=data)
     output_file_path = "index.html"
     s3 = boto3.resource("s3")
-    s3.Bucket("lvlup-build-monitor").put_object(
+    s3.Bucket("monitor.levelup-program.com").put_object(
         Body=content.encode("utf-8"), ContentType="text/html", Key=output_file_path
     )
 

@@ -74,7 +74,7 @@ functions:
       # https://www.serverless.com/blog/aws-secrets-management/
       GITHUB_TOKEN: ${ssm:/GITHUB_TOKEN}
     events:
-      - schedule: rate(1 minute)
+      - schedule: rate(5 minutes)
 
 plugins:
   - serverless-python-requirements
@@ -91,12 +91,12 @@ package:
     - 'templates/**'
 
 custom:
-  bucketName: lvlup-build-monitor
+  bucketName: monitor.levelup-program.com
   s3Sync:
     - bucketName: ${self:custom.bucketName}
       localDir: static
   pythonRequirements:
-    usePipenv: true
+    usePipenv: false
     invalidateCaches: true
     strip: false
     slim: true

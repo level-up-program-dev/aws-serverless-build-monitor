@@ -16,19 +16,19 @@
     "default": {
         "boto3": {
             "hashes": [
-                "sha256:2a9b283cd4208cfcea873baac29e5ceb011afbd5a5c5b7a35cb305f377c39f60",
-                "sha256:90d590eda672775ef5ad0cdd4f5c2a51a964e3de631f3deccbc96e29cf0cd5a9"
+                "sha256:a60b71a41b257f15662d8bec9fa32db4a9558bf9b032d1a6957e8bf9f21324c8",
+                "sha256:db37be1a765a06d2fea6ed4ca27f71d710ba1be6982574419dcd2a78020077e0"
             ],
             "index": "pypi",
-            "version": "==1.24.82"
+            "version": "==1.26.2"
         },
         "botocore": {
             "hashes": [
-                "sha256:034cdcfb74bcca9124fcaafed857ad78ec572ff95ed802b0608fa7505aaf4a1f",
-                "sha256:b122c7048a79fef53f3d45f7ca2999c2559e15fc4531653824ebd3154d77ede5"
+                "sha256:8a8c28dc22c241faae7ed09a67481e82972c4d632020b99598a8e81e8e07ae6b",
+                "sha256:e170dd237b976fe9d9ae8d8bea7248dbc6d3664ed5fc142f59b41c2078e9220f"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==1.27.82"
+            "version": "==1.29.2"
         },
         "fastcore": {
             "hashes": [
@@ -64,11 +64,11 @@
         },
         "jinja2-humanize-extension": {
             "hashes": [
-                "sha256:19ec9f85104d6f29b8b4215930ad21674b361c9931476bf51e246d247a1f8571",
-                "sha256:d4243d738b05ebf19460ef4a8b13a319edf52b8339b9e33b6a0573f7ae83d7d3"
+                "sha256:b5cf37f8127bfcb22a133d277fd79607e397abbedd4f51d604c5449a7753e0b0",
+                "sha256:fda7b515f89757515b3a05d5b874272ea83939ff9a5cb02e4aae3c9d35843a63"
             ],
             "index": "pypi",
-            "version": "==0.2.1"
+            "version": "==0.2.2"
         },
         "jmespath": {
             "hashes": [
@@ -134,11 +134,11 @@
         },
         "pip": {
             "hashes": [
-                "sha256:3fd1929db052f056d7a998439176d3333fa1b3f6c1ad881de1885c0717608a4b",
-                "sha256:b61a374b5bc40a6e982426aede40c9b5a08ff20e640f5b56977f4f91fed1e39a"
+                "sha256:1daab4b8d3b97d1d763caeb01a4640a2250a0ea899e257b1e44b9eded91e15ab",
+                "sha256:8182aec21dad6c0a49a2a3d121a87cd524b950e0b6092b181625f07ebdde7530"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==22.2.2"
+            "version": "==22.3"
         },
         "pyparsing": {
             "hashes": [

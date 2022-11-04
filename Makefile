@@ -1,10 +1,13 @@
 reqs:
-	pipenv lock -r > requirements.txt
+	pipenv requirements > requirements.txt
 
-deploy-all:
+deploy: reqs
 	serverless deploy
 
-package:
+remove:
+	serverless remove
+
+package: reqs
 	- rm -rf ./dist
 	mkdir -p ./dist
 	serverless package --package ./dist
