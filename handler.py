@@ -48,7 +48,7 @@ def get_all_repo_data() -> List:
     for repo in get_repo_list():
         repo_name = repo["name"]
         logger.info(f"Found repo {repo_name}")
-        if not repo_name.endswith("-reference") and not repo_name.startswith("team-"):
+        if not repo_name.startswith("team-"):
             continue
         try:
             headref = get_branch(repo_name, repo["default_branch"])

@@ -83,6 +83,7 @@ plugins:
 package:
   patterns:
     - '!node_modules/**'
+    - '!.venv'
     - '!package.*'
     - '!Pipfile*'
     - '!static/**'

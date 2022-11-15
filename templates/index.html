@@ -34,62 +34,66 @@
     <main class="bg-light">
         <div class="py-5">
             <div class="container-fluid">
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
-                    {% for repo in data|sort(attribute="name") %}
-                        {% for workflow in repo.workflows|sort(attribute="name") %}
-                        <div class="col">
-                            <div class='card shadow border-{% if workflow.conclusion == "success" %}success{% elif workflow.conclusion == "failure" %}danger{% elif workflow.conclusion in ("action_required", "timed_out") %}warning{% else %}secondary{% endif %}'>
-                                <div class='card-header text-bg-{% if workflow.conclusion == "success" %}success{% elif workflow.conclusion == "failure" %}danger{% elif workflow.conclusion in ("action_required", "timed_out") %}warning{% else %}secondary{% endif %}'>
-                                    <strong>{{ repo.name }}</strong>
-                                    <div class="float-end">
-                                        <span class="badge bg-dark">
-                                            <i class="fa-solid fa-clock"></i> {{ repo.head_ref.commit.timestamp|humanize_naturaldelta }} ago
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col">
-                                            <table>
-                                                <tr>
-                                                    <td>
-                                                        <img class="rounded-circle" src="{{ repo.head_ref.actor.avatar_url }}" height="40" alt="{{ repo.head_ref.actor.login }}"/>
-                                                    </td>
-                                                    <td class="align-top">
-                                                        <small class="text-muted">
-                                                            <a href="{{ repo.head_ref.actor.html_url }}" target="_blank">{{ repo.head_ref.actor.login }}</a> commit 
-                                                            <a href="{{ repo.html_url }}/commit/{{ repo.head_ref.commit.id }}" target="_blank">{{ repo.head_ref.commit.id|truncate(7, True, '') }}</a> on 
-                                                            <span class="badge bg-secondary">
-                                                                <i class="fa-solid fa-code-branch"></i> {{ repo.default_branch }}
-                                                            </span>
-                                                        </small>
-                                                        <small>{{ repo.head_ref.commit.message|truncate(140) }}</small>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">
-                                        <a href="{{workflow.html_url}}" class="card-link" target="_blank">{{ workflow.name }}</a>
+                {% if data %}
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+                        {% for repo in data|sort(attribute="name") %}
+                            {% for workflow in repo.workflows|sort(attribute="name") %}
+                            <div class="col">
+                                <div class='card shadow border-{% if workflow.conclusion == "success" %}success{% elif workflow.conclusion == "failure" %}danger{% elif workflow.conclusion in ("action_required", "timed_out") %}warning{% else %}secondary{% endif %}'>
+                                    <div class='card-header text-bg-{% if workflow.conclusion == "success" %}success{% elif workflow.conclusion == "failure" %}danger{% elif workflow.conclusion in ("action_required", "timed_out") %}warning{% else %}secondary{% endif %}'>
+                                        <strong>{{ repo.name }}</strong>
                                         <div class="float-end">
-                                            {% for job in workflow.jobs|sort(attribute="name") %}
-                                            <span data-bs-toggle="tooltip" data-bs-title="{{job.name}}" class='badge rounded-pill text-bg-{% if job.conclusion == "success" %}success{% elif job.conclusion == "failure" %}danger{% elif job.conclusion in ("action_required", "timed_out") %}warning{% else %}secondary{% endif %}'>
-                                                <i class='{% if job.status == "completed" %}bi bi-check{% elif job.status == "in_progress" %}bi bi-gear-fill{% elif job.status == "queued" %}bi bi-hourglass-split{% endif %}'></i>
-                                            </span>
-                                            {% endfor %}
-                                            <span data-bs-toggle="tooltip" data-bs-title="{{ workflow.status }}: {{ workflow.conclusion }}" class='badge rounded-pill text-bg-{% if workflow.conclusion == "success" %}success{% elif workflow.conclusion == "failure" %}danger{% elif workflow.conclusion in ("action_required", "timed_out") %}warning{% else %}secondary{% endif %}'>
-                                                <i class='{% if workflow.status == "completed" %}bi bi-check-all{% elif workflow.status == "in_progress" %}bi bi-gear-fill{% elif workflow.status == "queued" %}bi bi-hourglass-split{% endif %}'></i>
+                                            <span class="badge bg-dark">
+                                                <i class="fa-solid fa-clock"></i> {{ repo.head_ref.commit.timestamp|humanize_naturaldelta }} ago
                                             </span>
                                         </div>
-                                    </li>
-                                </ul>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col">
+                                                <table>
+                                                    <tr>
+                                                        <td>
+                                                            <img class="rounded-circle" src="{{ repo.head_ref.actor.avatar_url }}" height="40" alt="{{ repo.head_ref.actor.login }}"/>
+                                                        </td>
+                                                        <td class="align-top">
+                                                            <small class="text-muted">
+                                                                <a href="{{ repo.head_ref.actor.html_url }}" target="_blank">{{ repo.head_ref.actor.login }}</a> commit 
+                                                                <a href="{{ repo.html_url }}/commit/{{ repo.head_ref.commit.id }}" target="_blank">{{ repo.head_ref.commit.id|truncate(7, True, '') }}</a> on 
+                                                                <span class="badge bg-secondary">
+                                                                    <i class="fa-solid fa-code-branch"></i> {{ repo.default_branch }}
+                                                                </span>
+                                                            </small>
+                                                            <small>{{ repo.head_ref.commit.message|truncate(140) }}</small>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">
+                                            <a href="{{workflow.html_url}}" class="card-link" target="_blank">{{ workflow.name }}</a>
+                                            <div class="float-end">
+                                                {% for job in workflow.jobs|sort(attribute="name") %}
+                                                <span data-bs-toggle="tooltip" data-bs-title="{{job.name}}" class='badge rounded-pill text-bg-{% if job.conclusion == "success" %}success{% elif job.conclusion == "failure" %}danger{% elif job.conclusion in ("action_required", "timed_out") %}warning{% else %}secondary{% endif %}'>
+                                                    <i class='{% if job.status == "completed" %}bi bi-check{% elif job.status == "in_progress" %}bi bi-gear-fill{% elif job.status == "queued" %}bi bi-hourglass-split{% endif %}'></i>
+                                                </span>
+                                                {% endfor %}
+                                                <span data-bs-toggle="tooltip" data-bs-title="{{ workflow.status }}: {{ workflow.conclusion }}" class='badge rounded-pill text-bg-{% if workflow.conclusion == "success" %}success{% elif workflow.conclusion == "failure" %}danger{% elif workflow.conclusion in ("action_required", "timed_out") %}warning{% else %}secondary{% endif %}'>
+                                                    <i class='{% if workflow.status == "completed" %}bi bi-check-all{% elif workflow.status == "in_progress" %}bi bi-gear-fill{% elif workflow.status == "queued" %}bi bi-hourglass-split{% endif %}'></i>
+                                                </span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
+                            {% endfor %}
                         {% endfor %}
-                    {% endfor %}
-                </div>
+                    </div>
+                {% else %}
+                    <h1>No team repos found</h1>
+                {% endif %}
             </div>
         </div>
     </main>
