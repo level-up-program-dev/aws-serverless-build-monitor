@@ -76,6 +76,9 @@ def get_all_repo_data() -> List:
                         f"Found workflow jobs for {repo_name}:{workflow_run_id}"
                     )
                     workflow_run["jobs"].append(job)
+                    if job["name"].lower() == "build-and-test":
+                        # Overwrite workflow status with build-and-test status
+                        workflow_run["conclusion"] = job["conclusion"]
                 repo["workflows"].append(workflow_run)
             repo_data.append(repo)
     return repo_data
