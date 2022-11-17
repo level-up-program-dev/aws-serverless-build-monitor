@@ -7,7 +7,6 @@ from fastcore.net import HTTP404NotFoundError
 from jinja2 import Environment, FileSystemLoader
 import boto3
 
-
 GH_ORG = "level-up-program"
 TEMPLATE_ROOT_DIR = Path("./templates")
 environment = Environment(
@@ -19,7 +18,7 @@ template = environment.get_template("index.html")
 
 api = GhApi()
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 
 def get_branch(repo: str, branch_name: str) -> Dict:
@@ -47,18 +46,21 @@ def get_all_repo_data() -> List:
     repo_data = []
     for repo in get_repo_list():
         repo_name = repo["name"]
-        logger.info(f"Found repo {repo_name}")
         if not repo_name.startswith("team-"):
             continue
         try:
+            logger.info(f"Found repo {repo_name}")
             headref = get_branch(repo_name, repo["default_branch"])
         except HTTP404NotFoundError:
+            logger.info(f"Unable to find branch for {repo_name}")
             continue
         else:
             commit_sha = headref["object"]["sha"]
             repo["workflows"] = []
             repo["head_ref"] = {}
+            logger.info(f"Retrieving workflow runs for {repo_name}:{commit_sha}")
             for workflow_run in get_workflow_runs(repo_name, commit_sha):
+                logger.info(f"Found workflow runs for {repo_name}:{commit_sha}")
                 repo["head_ref"]["actor"] = workflow_run["triggering_actor"]
                 repo["head_ref"]["commit"] = workflow_run["head_commit"]
                 repo["head_ref"]["commit"]["timestamp"] = parser.parse(
@@ -66,7 +68,13 @@ def get_all_repo_data() -> List:
                 )
                 workflow_run_id = workflow_run["id"]
                 workflow_run["jobs"] = []
+                logger.info(
+                    f"Retrieving workflow jobs for {repo_name}:{workflow_run_id}"
+                )
                 for job in get_workflow_jobs(repo_name, workflow_run_id):
+                    logger.info(
+                        f"Found workflow jobs for {repo_name}:{workflow_run_id}"
+                    )
                     workflow_run["jobs"].append(job)
                 repo["workflows"].append(workflow_run)
             repo_data.append(repo)
