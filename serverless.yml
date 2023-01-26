@@ -70,6 +70,7 @@ resources:
 functions:
   renderRepoDetails:
     handler: handler.run
+    timeout: 300
     environment: 
       # https://www.serverless.com/blog/aws-secrets-management/
       GITHUB_TOKEN: ${ssm:/GITHUB_TOKEN}
