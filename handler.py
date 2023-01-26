@@ -17,8 +17,8 @@ environment = Environment(
 template = environment.get_template("index.html")
 
 api = GhApi()
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 def get_branch(repo: str, branch_name: str) -> Dict:
@@ -86,6 +86,7 @@ def get_all_repo_data() -> List:
 
 def main():
     data = get_all_repo_data()
+    logger.info("Workflow data captured")
     content = template.render(data=data)
     output_file_path = "index.html"
     s3 = boto3.resource("s3")
