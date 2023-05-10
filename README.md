@@ -11,6 +11,31 @@ authorName: 'Rupak Ganguly'
 authorAvatar: 'https://avatars0.githubusercontent.com/u/8188?v=4&s=140'
 -->
 
+# Project setup on Ubuntu and possibly other Linuxes
+Ubuntu comes installed with a system python. In 22.04 LTS this is Python 3.10. These versions of python are split apart into packages. For example, in a mimimal Ubuntu install, the system python does not have pip or virtualenv installed. They must be installed separately.
+
+Because of this, it is reccomended to use pyenv to setup your Pythons for development purposes. It is easy to switch to the python required, and the time required to download and build a python from source is faster than you would think (A core i7-7700HQ with 16 GB of memory downloaded and built Python 3.9 in just under 5 minutes).
+
+In order to get pyenv, follow the instructions for the Automatic installer (https://github.com/pyenv/pyenv/wiki#suggested-build-environment), setup your shell (https://github.com/pyenv/pyenv/#set-up-your-shell-environment-for-pyenv), and download the requirements for your linux as described here: https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+
+For this project, you'll want to install **3.9:latest**
+
+```sh
+pyenv install 3.9:latest
+```
+
+and activate it for local use in the current directory of the project, where x is the minor version provided as output to the install command.  _Note: If there is already a .python-version file in the directory, this step is not required.
+
+```sh
+pyenv local 3.9.x
+```
+
+once you pass the step of bootstrapping in the makefile, be sure to source the virtual environment created before moving onto other steps:
+
+```sh
+pipenv shell
+```
+
 # Serverless Framework Python Scheduled Cron on AWS
 
 This template demonstrates how to develop and deploy a simple cron-like service running on AWS Lambda using the traditional Serverless Framework.
