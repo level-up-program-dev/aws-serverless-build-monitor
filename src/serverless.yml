@@ -3,101 +3,59 @@ frameworkVersion: '3'
 
 provider:
   name: aws
+  region: ${opt:region, 'us-east-2'}
+  stage: ${self:custom.currentStage}
   deploymentMethod: direct
   runtime: python3.9
-  region: ${opt:region, 'us-east-1'}
+  httpApi:
+    cors: true
   iam:
     role:
       statements:
         - Effect: Allow
-          Action: 's3:ListBucket'
-          Resource: '*'
-        - Effect: Allow
           Action:
-            - 's3:GetObject'
-            - 's3:PutObject'
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:DescribeTable
           Resource:
-            - arn:aws:s3:::${self:custom.bucketName}/*
-
-resources:
-  Resources:
-    StaticSite:
-      Type: AWS::S3::Bucket
-      Properties:
-        AccessControl: PublicRead
-        BucketName: ${self:custom.bucketName}
-        WebsiteConfiguration:
-          IndexDocument: index.html
-          ErrorDocument: error.html
-    StaticSiteS3BucketPolicy:
-      Type: AWS::S3::BucketPolicy
-      Properties:
-        Bucket:
-          Ref: StaticSite
-        PolicyDocument:
-          Statement:
-            - Sid: PublicReadGetObject
-              Effect: Allow
-              Principal: "*"
-              Action:
-              - s3:GetObject
-              Resource:
-                Fn::Join: [
-                  "", [
-                    "arn:aws:s3:::",
-                    {
-                      "Ref": "StaticSite"
-                    },
-                    "/*"
-                  ]
-                ]
-  Outputs:
-    WebsiteURL:
-      Value: !GetAtt 
-        - StaticSite
-        - WebsiteURL
-      Description: URL for website hosted on S3
-    S3BucketSecureURL:
-      Value: !Join 
-        - ''
-        - - 'https://'
-          - !GetAtt 
-            - StaticSite
-            - DomainName
-      Description: Name of S3 bucket to hold website content
+            - arn:aws:dynamodb:${self:provider.region}:345218099459:table/levelup*
+            - arn:aws:dynamodb:${self:provider.region}:345218099459:table/levelup*/index/*
 
 
 functions:
-  renderRepoDetails:
-    handler: handler.run
-    timeout: 300
-    environment: 
-      # https://www.serverless.com/blog/aws-secrets-management/
+  api:
+    handler: wsgi_handler.handler
+    description: Level Up Build Monitor - Takes EventUID and list of team numbers as parameter
+    environment:
+      FLASK_ENV: development
       GITHUB_TOKEN: ${ssm:/GITHUB_TOKEN}
+      LOGLEVEL: INFO
     events:
-      - schedule: rate(5 minutes)
+      - http: ANY /
+      - http: ANY /{proxy+}
 
 plugins:
   - serverless-python-requirements
-  - serverless-s3-sync
   - serverless-wsgi
   - serverless-domain-manager
+
 package:
   patterns:
     - '!node_modules/**'
-    - '!.venv'
     - '!package.*'
     - '!Pipfile*'
-    - '!static/**'
     - '!*.md'
     - '!Makefile'
+    - '!.venv'
+    - '!dist'
     - 'templates/**'
 
 custom:
-  bucketName: monitor.levelup-program.com
-  s3Sync:
-    - bucketName: ${self:custom.bucketName}
-      localDir: static
+  defaultStage: dev
+  currentStage: ${opt:stage, self:custom.defaultStage}
+  wsgi:
+    app: app.app
   pythonRequirements:
     usePipenv: false
     invalidateCaches: true
@@ -108,3 +66,14 @@ custom:
         - "**/*.pyc"
         - "**/*.pyo"
         - "**/__pycache__*"
+  customDomain:
+    domainName: monitor-${self:provider.stage}.levelup-program.com
+    stage: ci
+    basePath: api
+    certificateName: '*.levelup-program.com'
+    createRoute53Record: true
+    createRoute53IPv6Record: true
+    endpointType: REGIONAL
+    securityPolicy: tls_1_2
+    apiType: rest
+    autoDomain: false
