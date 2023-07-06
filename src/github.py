@@ -4,17 +4,8 @@ from dateutil import parser
 from typing import Dict, List
 from ghapi.all import GhApi
 from fastcore.net import HTTP404NotFoundError
-from jinja2 import Environment, FileSystemLoader
-import boto3
+from constants import GH_ORG
 
-GH_ORG = "level-up-program"
-TEMPLATE_ROOT_DIR = Path("./templates")
-environment = Environment(
-    loader=FileSystemLoader(TEMPLATE_ROOT_DIR),
-    extensions=["jinja2_humanize_extension.HumanizeExtension"],
-    autoescape=True,
-)
-template = environment.get_template("index.html")
 
 api = GhApi()
 logger = logging.getLogger()
@@ -84,20 +75,5 @@ def get_all_repo_data() -> List:
     return repo_data
 
 
-def main():
-    data = get_all_repo_data()
-    logger.info("Workflow data captured")
-    content = template.render(data=data)
-    output_file_path = "index.html"
-    s3 = boto3.resource("s3")
-    s3.Bucket("monitor.levelup-program.com").put_object(
-        Body=content.encode("utf-8"), ContentType="text/html", Key=output_file_path
-    )
-
-
-def run(event, context):
-    main()
-
-
-if __name__ == "__main__":
-    main()
+def handler():
+    logger.info("I ran the handler")

@@ -21,7 +21,15 @@ provider:
           Resource:
             - arn:aws:dynamodb:${self:provider.region}:345218099459:table/levelup*
             - arn:aws:dynamodb:${self:provider.region}:345218099459:table/levelup*/index/*
-
+        - Effect: Allow
+          Action: 's3:ListBucket'
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - 's3:GetObject'
+            - 's3:PutObject'
+          Resource:
+            - arn:aws:s3:::${self:custom.bucketName}/*
 
 functions:
   api:
@@ -35,6 +43,39 @@ functions:
       - http: ANY /
       - http: ANY /{proxy+}
       - httpApi: '*'
+  cacheRepoData:
+    handler: github.handler
+    description: Level Up Build Monitor Refresh - Fetch data from github
+    timeout: 300
+    environment:
+      GITHUB_TOKEN: ${ssm:/GITHUB_TOKEN}
+      LOGLEVEL: INFO
+    events:
+      - schedule:
+          rate: rate(5 minutes)
+          name: pull-gh-actions-status
+          description: 'Runs regularly to fetch and update build status for monitor'
+      - http:
+          path: pull-gh-actions-status
+          method: get
+          integration: lambda
+          cors: true
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+
+resources:
+  Resources:
+    CacheBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.bucketName}
+        LifecycleConfiguration:
+          Rules:
+            - Id: DeleteObjectsOlderThanNDays
+              Prefix: team
+              Status: Enabled
+              ExpirationInDays: 1
 
 plugins:
   - serverless-python-requirements
@@ -55,6 +96,7 @@ package:
 custom:
   defaultStage: dev
   currentStage: ${opt:stage, self:custom.defaultStage}
+  bucketName: levelup-monitor-cache-${self:custom.currentStage}
   wsgi:
     app: app.app
   pythonRequirements:

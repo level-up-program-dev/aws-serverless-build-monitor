@@ -2,9 +2,6 @@ import logging
 import os
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader
-
-from utils import makeQR
 
 #########################
 # Logging Setup
@@ -19,12 +16,6 @@ LOGGER.setLevel(logging.INFO)
 
 ROOT_DIR = Path(__file__).parent
 TEMPLATE_ROOT_DIR = ROOT_DIR.joinpath("templates")
-ENV = Environment(
-    loader=FileSystemLoader(TEMPLATE_ROOT_DIR),
-    autoescape=True,
-    extensions=["jinja2_humanize_extension.HumanizeExtension"],
-)
-ENV.filters["makeQR"] = makeQR
 
 #########################
 # Application Specific
