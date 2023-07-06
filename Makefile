@@ -1,24 +1,45 @@
 bootstrap:
 	npm install -g serverless
-	sls plugin install -n serverless-python-requirements
-	- pipenv --rm
-	pipenv update
-	pipenv install -r requirements.txt
+	cd src && sls plugin install -n serverless-wsgi
+	cd src && sls plugin install -n serverless-python-requirements
+	cd src && sls plugin install -n serverless-domain-manager
+	pipenv update --dev
 
 reqs:
-	pipenv requirements > requirements.txt
-	pipenv install -r requirements.txt
+	pipenv requirements > src/requirements.txt
 
-deploy: reqs
-	serverless deploy
+clean-pyc: ## remove Python file artifacts
+	find . -name '*.pyc' -exec rm -f {} +
+	find . -name '*.pyo' -exec rm -f {} +
+	find . -name '*~' -exec rm -f {} +
+	find . -name '__pycache__' -exec rm -fr {} +
 
-remove:
-	serverless remove
-
-package: reqs
+clean: clean-pyc
 	- rm -rf ./dist
+	- cd src && serverless requirements clean
+
+prep: clean reqs
+
+deploy-prod: prep
+	cd src && serverless deploy --region us-east-1 --stage prod
+	git checkout develop
+
+deploy-dev: prep
+	cd src && serverless deploy --region us-east-2 --stage dev
+
+remove-dev:
+	cd src && serverless remove --region us-east-2 --stage dev
+
+remove-prod:
+	cd src && serverless remove --region us-east-1 --stage prod
+
+package-dev: prep
 	mkdir -p ./dist
-	serverless package --package ./dist
+	cd src && serverless package --region us-east-2 --stage dev --package ../dist
+
+package-prod: prep
+	mkdir -p ./dist
+	cd src && serverless package --region us-east-1 --stage prod --package ../dist
 
 run:
-	serverless invoke local --function renderRepoDetails
+	FLASK_APP=src/app.py pipenv run flask run -h localhost -p 8000

@@ -80,7 +80,8 @@ functions:
 plugins:
   - serverless-python-requirements
   - serverless-s3-sync
-
+  - serverless-wsgi
+  - serverless-domain-manager
 package:
   patterns:
     - '!node_modules/**'

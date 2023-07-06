@@ -5,8 +5,10 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "serverless-domain-manager": "^7.0.4",
     "serverless-python-requirements": "^6.0.0",
-    "serverless-s3-sync": "^3.1.0"
+    "serverless-s3-sync": "^3.1.0",
+    "serverless-wsgi": "^3.0.2"
   },
   "dependencies": {
     "serverless": "^3.24.0"

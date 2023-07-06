@@ -5,19 +5,26 @@ name = "pypi"
 
 [packages]
 ghapi = "==1.0.3"
-boto3 = "==1.26.2"
-jinja2 = "==3.1.2"
+boto3 = "*"
 jinja2-humanize-extension = "==0.2.2"
 python-dateutil = "==2.8.2"
 botocore = "==1.29.2"
 fastcore = "==1.5.27"
 humanize = "==3.14.0"
 jmespath = "==1.0.1"
-markupsafe = "==2.1.1"
+markupsafe = "==2.0.1"
 packaging = "==21.3"
 pyparsing = "==3.0.9"
 s3transfer = "==0.6.0"
 six = "==1.16.0"
 urllib3 = "==1.26.12"
+flask = "==1.1.4"
+jinja2 = "==2.11.3"
+pynamodb = "*"
 
 [dev-packages]
+pytest = "*"
+python-dotenv = "*"
+
+[requires]
+python_version = "3.9"
