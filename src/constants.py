@@ -31,4 +31,3 @@ GH_ORG_URL = f"https://github.com/{GH_ORG}/"
 
 AWS_DEFAULT_REGION = os.environ.get("AWS_DEFAULT_REGION", "us-east-2")
 DYNAMODB_ENDPOINT = os.environ.get("DYNAMODB_ENDPOINT")
-
