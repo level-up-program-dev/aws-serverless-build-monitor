@@ -41,5 +41,8 @@ package-prod: prep
 	mkdir -p ./dist
 	cd src && serverless package --region us-east-1 --stage prod --package ../dist
 
+shell:
+	pipenv shell
+
 run:
 	FLASK_APP=src/app.py pipenv run flask run -h localhost -p 8001
