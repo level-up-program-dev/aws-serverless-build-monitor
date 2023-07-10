@@ -42,4 +42,4 @@ package-prod: prep
 	cd src && serverless package --region us-east-1 --stage prod --package ../dist
 
 run:
-	FLASK_APP=src/app.py pipenv run flask run -h localhost -p 8000
+	FLASK_APP=src/app.py pipenv run flask run -h localhost -p 8001

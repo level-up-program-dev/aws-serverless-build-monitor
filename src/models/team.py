@@ -16,9 +16,9 @@ class TeamModel(Model):
         if DYNAMODB_ENDPOINT:
             host = DYNAMODB_ENDPOINT
 
+    team_number = NumberAttribute(hash_key=True)
     event_uid = UUIDAttribute(range_key=True)
     classroom_number = NumberAttribute()
-    team_number = NumberAttribute(hash_key=True)
     name = UnicodeAttribute()
     num_members = NumberAttribute()
     tech_stack = UnicodeAttribute()

@@ -33,15 +33,14 @@
             <div class="container-fluid">
                 {% if data %}
                     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
-                        {% for repo in data|sort(attribute="name") %}
-                            {% for workflow in repo.workflows|sort(attribute="name") %}
+                        {% for workflow in data %}
                             <div class="col">
                                 <div class='card shadow border-{% if workflow.conclusion == "success" %}success{% elif workflow.conclusion == "failure" %}danger{% elif workflow.conclusion in ("action_required", "timed_out") %}warning{% else %}secondary{% endif %}'>
                                     <div class='card-header text-bg-{% if workflow.conclusion == "success" %}success{% elif workflow.conclusion == "failure" %}danger{% elif workflow.conclusion in ("action_required", "timed_out") %}warning{% else %}secondary{% endif %}'>
-                                        <strong>{{ repo.name }}</strong>
+                                        <strong>{{ workflow.repository.name }}</strong>
                                         <div class="float-end">
                                             <span class="badge bg-dark">
-                                                <i class="fa-solid fa-clock"></i> {{ repo.head_ref.commit.timestamp|humanize_naturaldelta }} ago
+                                                <i class="fa-solid fa-clock"></i> {{ workflow.head_commit.timestamp|humanize_naturaldelta }} ago
                                             </span>
                                         </div>
                                     </div>
@@ -51,17 +50,17 @@
                                                 <table>
                                                     <tr>
                                                         <td>
-                                                            <img class="rounded-circle" src="{{ repo.head_ref.actor.avatar_url }}" height="40" alt="{{ repo.head_ref.actor.login }}"/>
+                                                            <img class="rounded-circle" src="{{ workflow.triggering_actor.avatar_url }}" height="40" alt="{{ workflow.triggering_actor.login }}"/>
                                                         </td>
                                                         <td class="align-top">
                                                             <small class="text-muted">
-                                                                <a href="{{ repo.head_ref.actor.html_url }}" target="_blank">{{ repo.head_ref.actor.login }}</a> commit 
-                                                                <a href="{{ repo.html_url }}/commit/{{ repo.head_ref.commit.id }}" target="_blank">{{ repo.head_ref.commit.id|truncate(7, True, '') }}</a> on 
+                                                                <a href="{{ workflow.triggering_actor.html_url }}" target="_blank">{{ workflow.triggering_actor.login }}</a> commit 
+                                                                <a href="{{ workflow.repository.html_url }}/commit/{{ workflow.head_commit.id }}" target="_blank">{{ workflow.head_commit.id|truncate(7, True, '') }}</a> on 
                                                                 <span class="badge bg-secondary">
-                                                                    <i class="fa-solid fa-code-branch"></i> {{ repo.default_branch }}
+                                                                    <i class="fa-solid fa-code-branch"></i> {{ workflow.head_branch }}
                                                                 </span>
                                                             </small>
-                                                            <small>{{ repo.head_ref.commit.message|truncate(140) }}</small>
+                                                            <small>{{ workflow.head_commit.message|truncate(140) }}</small>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -85,11 +84,15 @@
                                     </ul>
                                 </div>
                             </div>
-                            {% endfor %}
                         {% endfor %}
                     </div>
                 {% else %}
-                    <h1>No team repos found</h1>
+                    <div class="alert alert-warning" role="alert">
+                        <h4 class="alert-heading">Oh no!</h4>
+                        <p>We couldn't find any repos for the teams you specified.</p>
+                        <hr>
+                        <p class="mb-0">Double check you passed in the correct event_id and team numbers</p>
+                    </div>
                 {% endif %}
             </div>
         </div>

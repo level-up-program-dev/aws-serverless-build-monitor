@@ -38,11 +38,14 @@ functions:
     environment:
       FLASK_ENV: development
       GITHUB_TOKEN: ${ssm:/GITHUB_TOKEN}
+      S3_CACHE_BUCKET: ${self:custom.bucketName}
       LOGLEVEL: INFO
     events:
-      - http: ANY /
-      - http: ANY /{proxy+}
-      - httpApi: '*'
+      - http:
+          method: any
+          path: /{proxy+}
+          cors: true
+
   cacheRepoData:
     handler: github.handler
     description: Level Up Build Monitor Refresh - Fetch data from github
@@ -83,6 +86,7 @@ plugins:
   - serverless-domain-manager
 
 package:
+  individually: true
   patterns:
     - '!node_modules/**'
     - '!package.*'

@@ -8,6 +8,7 @@ import boto3
 from fastcore.xtras import obj2dict
 from ghapi.all import GhApi
 
+from aws import write_dict_to_json_s3
 from constants import GH_ORG
 
 api = GhApi()
@@ -45,17 +46,10 @@ def write_dict_to_json_file(dict_object: Dict, filepath: str) -> None:
         outfile.write(json_string)
 
 
-def write_dict_to_json_s3(dict_object: Dict, keypath: str) -> None:
-    json_string = json.dumps(dict_object, indent=4, default=str)
-    s3 = boto3.resource("s3")
-    s3.Bucket("levelup-monitor-cache-dev").put_object(
-        Body=json_string.encode("utf-8"), ContentType="application/json", Key=keypath
-    )
-
-
-async def get_repo_data(repo_name: str) -> None:
-    repo_data = []
+async def get_repo_data(repo_name: str, cache: bool=False) -> None:
     logger.info(f"Retrieving workflow runs for repo: {repo_name}")
+
+    # There should only ever be 1 thing in this list, but it will be a list
     for workflow_run in get_latest_workflow_run(repo_name):
         logger.info(f"Found workflow run for repo: {repo_name}")
         required_keys = [
@@ -82,14 +76,22 @@ async def get_repo_data(repo_name: str) -> None:
             if job["name"].lower() == "build-and-test":
                 # Overwrite workflow status with build-and-test status
                 wf_data["conclusion"] = job["conclusion"]
-        repo_data.append(obj2dict(wf_data))
+        repo_data = obj2dict(wf_data)
+        if cache:
+            write_dict_to_json_s3(repo_data, f"{repo_name}.json")
 
-    write_dict_to_json_s3(repo_data, f"{repo_name}.json")
+        return repo_data
+    
+    return None
 
 
-async def get_all_repo_data():
+async def get_all_repo_data(cache: bool=True):
     coro_objs = []
     for repo_name in get_repo_list():
-        coro_objs.append(get_repo_data(repo_name))
+        coro_objs.append(get_repo_data(repo_name, cache=cache))
     results = await asyncio.gather(*coro_objs)
     return results
+
+
+def handler(*args):
+    asyncio.run(get_all_repo_data())

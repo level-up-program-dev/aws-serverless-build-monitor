@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c9e254a2e7fd52e3eee14419bb3edcdf58d4a8ec80532639a13b763c8210abad"
+            "sha256": "ca2d0d1f8a0e23c06cac5c9b21c26d42ca15b3b011874de42a2bb49d9fb2ea46"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -178,6 +178,14 @@
             ],
             "index": "pypi",
             "version": "==2.0.1"
+        },
+        "munch": {
+            "hashes": [
+                "sha256:542cb151461263216a4e37c3fd9afc425feeaf38aaa3025cd2a981fadb422235",
+                "sha256:71033c45db9fb677a0b7eb517a4ce70ae09258490e419b0e7f00d1e386ecb1b4"
+            ],
+            "index": "pypi",
+            "version": "==4.0.0"
         },
         "packaging": {
             "hashes": [
