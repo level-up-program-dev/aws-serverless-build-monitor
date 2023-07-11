@@ -1,10 +1,8 @@
 import asyncio
 import json
 import logging
-from pathlib import Path
 from typing import Dict, List
 
-import boto3
 from fastcore.xtras import obj2dict
 from ghapi.all import GhApi
 
@@ -46,7 +44,7 @@ def write_dict_to_json_file(dict_object: Dict, filepath: str) -> None:
         outfile.write(json_string)
 
 
-async def get_repo_data(repo_name: str, cache: bool=False) -> None:
+async def get_repo_data(repo_name: str, cache: bool = False) -> None:
     logger.info(f"Retrieving workflow runs for repo: {repo_name}")
 
     # There should only ever be 1 thing in this list, but it will be a list
@@ -81,11 +79,11 @@ async def get_repo_data(repo_name: str, cache: bool=False) -> None:
             write_dict_to_json_s3(repo_data, f"{repo_name}.json")
 
         return repo_data
-    
+
     return None
 
 
-async def get_all_repo_data(cache: bool=True):
+async def get_all_repo_data(cache: bool = True):
     coro_objs = []
     for repo_name in get_repo_list():
         coro_objs.append(get_repo_data(repo_name, cache=cache))

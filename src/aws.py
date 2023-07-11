@@ -10,6 +10,7 @@ from constants import S3_CACHE_BUCKET
 
 logger = logging.getLogger()
 
+
 def write_dict_to_json_s3(dict_object: Dict, keypath: str) -> None:
     logger.info(f"Writing {keypath} to S3")
     json_string = json.dumps(dict_object, indent=4, default=str)
@@ -44,8 +45,8 @@ def list_objects_generator(bucket, prefix=None, paginator="list_objects_v2"):
 def repo_cache_list():
     keys = []
     for x in list_objects_generator(S3_CACHE_BUCKET):
-        for obj in x['Contents']:
-            keys.append(obj['Key'])
+        for obj in x["Contents"]:
+            keys.append(obj["Key"])
     return keys
 
 
@@ -53,4 +54,4 @@ def repo_cache_list():
 def get_json_object(bucket: str, key: str):
     s3 = boto3.client("s3")
     obj = s3.get_object(Bucket=bucket, Key=key)
-    return json.loads(obj['Body'].read().decode('utf-8'))
+    return json.loads(obj["Body"].read().decode("utf-8"))

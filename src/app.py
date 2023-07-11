@@ -40,8 +40,14 @@ def get_data_from_s3(repo_names: List) -> Dict:
 @app.route("/")
 def home():
     event_id = request.args.get("event_id")
-    team_number_list = [x for x in request.args.get("team_number_list", "").strip(",").split(",") if x]
-    team_repo_names = [x for x in [get_repo_name_for_team(int(t), event_id) for t in team_number_list] if x]
+    team_number_list = [
+        x for x in request.args.get("team_number_list", "").strip(",").split(",") if x
+    ]
+    team_repo_names = [
+        x
+        for x in [get_repo_name_for_team(int(t), event_id) for t in team_number_list]
+        if x
+    ]
     data = get_data_from_s3(team_repo_names)
     return render_template(
         "index.html",
