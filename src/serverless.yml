@@ -34,7 +34,7 @@ provider:
 functions:
   api:
     handler: wsgi_handler.handler
-    description: Level Up Build Monitor - Takes EventUID and list of team numbers as parameter
+    description: Level Up Build Monitor - Takes EventUID and classroom number as parameter
     environment:
       FLASK_ENV: development
       GITHUB_TOKEN: ${ssm:/GITHUB_TOKEN}
