@@ -22,7 +22,6 @@ prep: clean reqs
 
 deploy-prod: prep
 	cd src && serverless deploy --region us-east-1 --stage prod
-	git checkout develop
 
 deploy-dev: prep
 	cd src && serverless deploy --region us-east-2 --stage dev

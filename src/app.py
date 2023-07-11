@@ -15,11 +15,14 @@ app.jinja_options["extensions"] = ["jinja2_humanize_extension.HumanizeExtension"
 
 
 @cache
-def get_repo_name_for_team(team_number: int, event_id: str) -> str:
+def get_repo_name_for_team(team_number: str, event_id: str) -> str:
     try:
+        team_number = int(team_number)
         team = TeamModel.get(team_number, event_id)
     except TeamModel.DoesNotExist:
         pass
+    except ValueError:
+        pass  # if the team_number cannot be convert to an integer
     else:
         return team.repo_name
 
@@ -40,19 +43,14 @@ def get_data_from_s3(repo_names: List) -> Dict:
 @app.route("/")
 def home():
     event_id = request.args.get("event_id")
-    team_number_list = [
-        x for x in request.args.get("team_number_list", "").strip(",").split(",") if x
-    ]
-    team_repo_names = [
-        x
-        for x in [get_repo_name_for_team(int(t), event_id) for t in team_number_list]
-        if x
-    ]
+    team_numbers = [x for x in request.args.get("team_numbers", "").strip(",").split(",") if x]
+    team_repo_names = [x for x in [get_repo_name_for_team(t, event_id) for t in team_numbers] if x]
+
+    if "repo_name" in request.args:
+        team_repo_names = [request.args.get("repo_name")]
+
     data = get_data_from_s3(team_repo_names)
     return render_template(
         "index.html",
-        event_id=event_id,
-        team_number_list=team_number_list,
-        team_repo_names=team_repo_names,
         data=data,
     )

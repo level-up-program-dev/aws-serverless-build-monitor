@@ -20,7 +20,7 @@ TEMPLATE_ROOT_DIR = ROOT_DIR.joinpath("templates")
 # Application Specific
 #########################
 
-SITE_URL = os.environ.get("SITE_URL", "http://localhost:8000")
+SITE_URL = os.environ.get("SITE_URL", "http://localhost:8001")
 GH_ORG = "level-up-program"
 GH_ORG_URL = f"https://github.com/{GH_ORG}/"
 

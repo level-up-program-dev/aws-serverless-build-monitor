@@ -51,6 +51,7 @@ functions:
     timeout: 300
     environment:
       GITHUB_TOKEN: ${ssm:/GITHUB_TOKEN}
+      S3_CACHE_BUCKET: ${self:custom.bucketName}
       LOGLEVEL: INFO
     events:
       - schedule:
