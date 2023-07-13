@@ -86,6 +86,7 @@ package:
     - '!*.md'
     - '!Makefile'
     - '!.venv'
+    - '!.env'
     - '!dist'
     - 'templates/**'
 

@@ -39,7 +39,6 @@ def list_objects_generator(bucket, prefix=None, paginator="list_objects_v2"):
         yield response
 
 
-@cache
 def repo_cache_list():
     keys = []
     for x in list_objects_generator(S3_CACHE_BUCKET):
@@ -48,7 +47,6 @@ def repo_cache_list():
     return keys
 
 
-@cache
 def get_json_object(bucket: str, key: str):
     s3 = boto3.client("s3")
     obj = s3.get_object(Bucket=bucket, Key=key)
