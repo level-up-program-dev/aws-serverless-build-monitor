@@ -14,7 +14,6 @@ app.url_map.strict_slashes = False
 app.jinja_options["extensions"] = ["jinja2_humanize_extension.HumanizeExtension"]
 
 
-@cache
 def get_team_repos_for_classroom(event_id: str, classroom_number: str) -> list:
     try:
         classroom_number = int(classroom_number)
@@ -22,8 +21,7 @@ def get_team_repos_for_classroom(event_id: str, classroom_number: str) -> list:
             [
                 t.repo_name
                 for t in TeamModel.scan()
-                if str(t.event_uid) == event_id
-                and t.classroom_number == classroom_number
+                if str(t.event_uid) == event_id and t.classroom_number == classroom_number
             ]
         )
     except (ValueError, TypeError):
@@ -52,9 +50,7 @@ def home():
     else:
         event_id = request.args.get("event_id")
         classroom_number = request.args.get("classroom_number")
-        team_repo_names = get_team_repos_for_classroom(
-            event_id=event_id, classroom_number=classroom_number
-        )
+        team_repo_names = get_team_repos_for_classroom(event_id=event_id, classroom_number=classroom_number)
 
     data = get_data_from_s3(team_repo_names)
     return render_template(
