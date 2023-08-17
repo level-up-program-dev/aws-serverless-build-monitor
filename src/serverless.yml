@@ -49,7 +49,7 @@ functions:
   cacheRepoData:
     handler: github.handler
     description: Level Up Build Monitor Refresh - Fetch data from github
-    timeout: 30
+    timeout: 300
     environment:
       GITHUB_TOKEN: ${ssm:/GITHUB_TOKEN}
       S3_CACHE_BUCKET: ${self:custom.bucketName}
