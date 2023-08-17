@@ -3,7 +3,7 @@ from functools import cache
 from typing import Dict, List
 
 from dateutil import parser
-from flask import Flask, render_template, request
+from flask import Flask, make_response, render_template, request
 from munch import Munch
 
 from aws import get_json_object, repo_cache_list
@@ -26,13 +26,16 @@ def get_team_repos_for_classroom(event_id: str, classroom_number: str) -> list:
             [
                 t.repo_name
                 for t in TeamModel.scan(
-                    TeamModel.event_uid.startswith(event_id) & (TeamModel.classroom_number == classroom_number)
+                    TeamModel.event_uid.startswith(event_id)
+                    & (TeamModel.classroom_number == classroom_number)
                 )
             ]
         )
     except (ValueError, TypeError):
         team_repos = []  # if the classroom_number cannot be convert to an integer
-    print(f"Found the following for repos for event {event_id} and classroom {classroom_number}: {team_repos}")
+    print(
+        f"Found the following for repos for event {event_id} and classroom {classroom_number}: {team_repos}"
+    )
     return team_repos
 
 
@@ -59,9 +62,15 @@ def home():
     else:
         event_id = request.args.get("event_id")
         classroom_number = request.args.get("classroom_number")
-        team_repo_names = get_team_repos_for_classroom(event_id=event_id, classroom_number=classroom_number)
+        team_repo_names = get_team_repos_for_classroom(
+            event_id=event_id, classroom_number=classroom_number
+        )
     data = get_data_from_s3(team_repo_names)
-    return render_template(
-        "index.html",
-        data=data,
+    response = make_response(
+        render_template(
+            "index.html",
+            data=data,
+        )
     )
+    response.headers.set("Clear-Site-Data", "cache")
+    return response
