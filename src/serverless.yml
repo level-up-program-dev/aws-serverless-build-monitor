@@ -40,7 +40,7 @@ functions:
       GITHUB_TOKEN: ${ssm:/GITHUB_TOKEN}
       S3_CACHE_BUCKET: ${self:custom.bucketName}
       LOGLEVEL: INFO
-    timeout: 300
+    timeout: 30
     events:
       - http: ANY /
       - http: ANY /{proxy+}
