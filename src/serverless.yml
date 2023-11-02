@@ -6,7 +6,7 @@ provider:
   region: ${opt:region, 'us-east-2'}
   stage: ${self:custom.currentStage}
   deploymentMethod: direct
-  runtime: python3.9
+  runtime: python3.10
   httpApi:
     cors: true
   iam:
