@@ -1,9 +1,14 @@
-bootstrap:
+bootstrap-python:
+	- pipenv --rm
+	pipenv update --dev
+
+bootstrap-serverless:
 	npm install -g serverless
 	cd src && sls plugin install -n serverless-wsgi
 	cd src && sls plugin install -n serverless-python-requirements
 	cd src && sls plugin install -n serverless-domain-manager
-	pipenv update --dev
+
+bootstrap: bootstrap-python bootstrap-serverless
 
 reqs:
 	pipenv requirements > src/requirements.txt
@@ -45,3 +50,6 @@ shell:
 
 run:
 	FLASK_APP=src/app.py pipenv run flask run -h localhost -p 8001
+
+test:
+	echo "Not yet implemented"
