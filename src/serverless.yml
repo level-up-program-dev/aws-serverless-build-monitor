@@ -109,12 +109,12 @@ custom:
         - "**/__pycache__*"
   customDomain:
     domainName: monitor-${self:custom.currentStage}.levelup-program.com
-    stage: ${self:custom.currentStage}
+    stage: '$default'
     basePath: ''
     certificateName: '*.levelup-program.com'
     createRoute53Record: true
-    createRoute53IPv6Record: true
-    endpointType: REGIONAL
+    createRoute53IPv6Record: false
+    endpointType: 'regional'
     securityPolicy: tls_1_2
     apiType: http
     autoDomain: true
