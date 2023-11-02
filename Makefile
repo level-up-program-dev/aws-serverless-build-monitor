@@ -26,16 +26,16 @@ clean: clean-pyc
 prep: clean reqs
 
 deploy-prod: prep
-	cd src && serverless deploy --region us-east-1 --stage prod
+	cd src && serverless deploy --region us-east-1 --stage prod --verbose
 
 deploy-dev: prep
-	cd src && serverless deploy --region us-east-2 --stage dev
+	cd src && serverless deploy --region us-east-2 --stage dev --verbose
 
 remove-dev:
-	cd src && serverless remove --region us-east-2 --stage dev
+	cd src && serverless remove --region us-east-2 --stage dev --verbose
 
 remove-prod:
-	cd src && serverless remove --region us-east-1 --stage prod
+	cd src && serverless remove --region us-east-1 --stage prod --verbose
 
 package-dev: prep
 	mkdir -p ./dist
